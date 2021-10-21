@@ -624,6 +624,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean mHandleVolumeKeysInWM;
 
+    private boolean mTorchGesture;
+
     private boolean mPendingKeyguardOccluded;
     private boolean mKeyguardOccludedChanged;
 
@@ -959,6 +961,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 	        resolver.registerContentObserver(Settings.System.getUriFor(
 		            Settings.System.SWIPE_TO_SCREENSHOT), false, this,
 		            UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.TORCH_POWER_BUTTON_GESTURE), false, this,
+                    UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -1114,7 +1119,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 || handledByPowerManager || isKeyGestureTriggered
                 || mKeyCombinationManager.isPowerKeyIntercepted();
         if (!mPowerKeyHandled) {
-            if (!interactive) {
+            if (!interactive && !mTorchGesture) {
                 wakeUpFromWakeKey(event);
             }
         } else {
@@ -1215,6 +1220,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 }
             }
+        } else if (mTorchGesture && !interactive) {
+            wakeUpFromWakeKey(eventTime, KEYCODE_POWER, /* isDown = */ true);
         }
     }
 
@@ -2736,10 +2743,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         @Override
         void onLongPress(long eventTime) {
-            if (mSingleKeyGestureDetector.beganFromNonInteractive()
-                    && !mSupportLongPressPowerWhenNonInteractive) {
-                Slog.v(TAG, "Not support long press power when device is not interactive.");
-                return;
+            if (mSingleKeyGestureDetector.beganFromNonInteractive() || isFlashLightIsOn()) {
+                if (mTorchGesture) {
+                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, "Power - Long Press - Torch");
+                    toggleCameraFlash();
+                    return;
+                }
+                if (!mSupportLongPressPowerWhenNonInteractive) {
+                    Slog.v(TAG, "Not support long press power when device is not interactive.");
+                    return;
+                }
             }
 
             powerLongPress(eventTime);
@@ -2760,6 +2773,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         void onKeyUp(long eventTime, int count, int displayId, int deviceId, int metaState) {
             if (mShouldEarlyShortPressOnPower && count == 1) {
                 powerPress(eventTime, 1 /*pressCount*/, displayId);
+            }
+        }
+    }
+
+    private boolean isFlashLightIsOn() {
+        return Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.FLASHLIGHT_ENABLED, 0) != 0;
+    }
+
+    public void toggleCameraFlash() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.toggleCameraFlash();
+            } catch (RemoteException e) {
+                Log.e(TAG, "Unable to toggle camera flash:", e);
             }
         }
     }
@@ -3150,6 +3179,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mStylusButtonsEnabled = Settings.Secure.getIntForUser(resolver,
                     Secure.STYLUS_BUTTONS_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
             mInputManagerInternal.setStylusButtonMotionEventsEnabled(mStylusButtonsEnabled);
+
+            mTorchGesture = Settings.System.getIntForUser(resolver,
+                    Settings.System.TORCH_POWER_BUTTON_GESTURE,
+                    0, UserHandle.USER_CURRENT) != 0;
 
             kidsModeEnabled = Settings.Secure.getIntForUser(resolver,
                     Settings.Secure.NAV_BAR_KIDS_MODE, 0, UserHandle.USER_CURRENT) == 1;
