@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2024 The Android Open Source Project
+<!--
+     Copyright (C) 2016 The CyanogenMod Project
+     Copyright (C) 2018-2022 The LineageOS Project
+     Copyright (C) 2024 Project Pixelage
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,8 +16,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <resources>
-    <dimen name="settingslib_expressive_zero_state_background_size">160dp</dimen>
-    <dimen name="settingslib_expressive_zero_state_title_width">316dp</dimen>
+    <!-- HD calling icon -->
+    <dimen name="signal_icon_viewport_size">24dp</dimen>
 </resources>
