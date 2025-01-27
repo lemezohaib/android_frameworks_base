@@ -211,8 +211,9 @@ import com.android.server.os.SchedulingPolicyService;
 import com.android.server.os.instrumentation.DynamicInstrumentationManagerService;
 import com.android.server.pdb.PersistentDataBlockService;
 import com.android.server.people.PeopleService;
-import com.android.server.permission.access.AccessCheckingService;
+import com.android.server.permission.access.AccessCheckingService
 import com.android.server.pinner.PinnerService;
+import com.android.server.pixelage.AttestationService;
 import com.android.server.pixelage.CustomDeviceConfigService;
 import com.android.server.pm.ApexManager;
 import com.android.server.pm.ApexSystemServiceInfo;
@@ -2770,6 +2771,11 @@ public final class SystemServer implements Dumpable {
                 mSystemServiceManager.startService(BackgroundInstallControlService.class);
                 t.traceEnd();
             }
+
+            // AttestationService
+            t.traceBegin("AttestationService");
+            mSystemServiceManager.startService(AttestationService.class);
+            t.traceEnd();
         }
 
         t.traceBegin("StartMediaProjectionManager");
