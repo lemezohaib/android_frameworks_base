@@ -212,7 +212,7 @@ import com.android.server.os.SchedulingPolicyService;
 import com.android.server.os.instrumentation.DynamicInstrumentationManagerService;
 import com.android.server.pdb.PersistentDataBlockService;
 import com.android.server.people.PeopleService;
-import com.android.server.permission.access.AccessCheckingService
+import com.android.server.permission.access.AccessCheckingService;
 import com.android.server.pinner.PinnerService;
 import com.android.server.pixelage.AttestationService;
 import com.android.server.pixelage.CustomDeviceConfigService;
