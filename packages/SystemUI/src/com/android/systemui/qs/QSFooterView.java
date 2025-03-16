@@ -205,7 +205,7 @@ public class QSFooterView extends FrameLayout {
     }
 
     private void updateUsageTextResources() {
-        FontSizeUtils.updateFontSizeFromStyle(mUsageText, R.style.TextAppearance_QS_Status_DataUsage);
+        FontSizeUtils.updateFontSizeFromStyle(mUsageText, R.style.TextAppearance_QS_Status_Build);
     }
 
     private void updateFooterAnimator() {
