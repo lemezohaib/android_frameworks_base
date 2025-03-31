@@ -6676,11 +6676,6 @@ public final class Settings {
          */
 
         /**
-         * @hide
-         */
-        public static final String SCREENSHOT_SHUTTER_SOUND = "screenshot_shutter_sound";
-
-        /**
          * Whether the torch launch gesture when the screen is off should be enabled.
          * @hide
          */
@@ -6783,6 +6778,11 @@ public final class Settings {
          * @hide
          */
         public static final String QS_SHOW_DATA_USAGE = "qs_show_data_usage";
+
+        /**
+         * @hide
+         */
+        public static final String SCREENSHOT_SHUTTER_SOUND = "screenshot_shutter_sound";
 
         /**
          * Keys we no longer back up under the current schema, but want to continue to
